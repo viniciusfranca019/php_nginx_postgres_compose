@@ -1,0 +1,46 @@
+version: '3.6'
+
+services:
+
+  app:
+    build:
+      context: .
+    entrypoint: ./entrypoint.sh
+    container_name: app
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    volumes:
+      - .:/var/www/
+    networks:
+      - app_network
+
+  webserver:
+    image: nginx:alpine
+    container_name: webserver
+    tty: true
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www
+      - ./nginx/conf.d:/etc/nginx/conf.d/
+    networks:
+      - app_network
+  database:
+    image: postgres
+    container_name: postgres
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      PGSQL_DATABASE: laravel
+      POSTGRES_PASSWORD: root
+      PGSQL_ROOT_PASSWORD: root
+      SERVICE_TAGS: dev
+      SERVICE_NAME: postgresql
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
