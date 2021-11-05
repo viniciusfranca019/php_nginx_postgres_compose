@@ -35,5 +35,3 @@ RUN ln -s public html
 EXPOSE 9000
 
 RUN php artisan cache:clear
-
-CMD ["php-fpm"]
